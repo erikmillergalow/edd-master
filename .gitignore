@@ -1,0 +1,20 @@
+
+edd.xcodeproj/project.xcworkspace/xcuserdata/olsonran.xcuserdatad/UserInterfaceState.xcuserstate
+
+work/*
+
+*.xcscheme
+
+*.xccheckout
+
+edd/edd.1
+
+edd/gene
+
+edd/lod
+
+*.csv
+
+sedd.qsub
+
+Terminal Saved Output
