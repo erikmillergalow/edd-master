@@ -295,7 +295,6 @@ int main(int argc, char *argv[])
         else if (strcmp(argv[i], "-el") == 0 && (i + 1) < argc)
         {
             elitism = true;
-            tournament = false;
             cout << "using elitism... " << endl;
         }
         
@@ -530,26 +529,33 @@ int main(int argc, char *argv[])
             //index value for most fit tAgent in the tournament round:
             int best_index = 0;
             
+            
             // randomly shuffle the agents
             random_shuffle(eddAgents.begin(), eddAgents.end());
+            
+            
+            
+            
+            tAgent *best = new tAgent;
+            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            if (elitism == true){
+                int index = 0;
+                for (int i = 1; i < populationSize; i++){
+                    if (eddAgents[i]->fitness > best->fitness){
+                        index = i;
+                        //cout << index << endl;
+                    } else {
+                        cout << index << endl;
+                    }
+                    
+                }
+                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+            }
         
             for(int i = 0; i < populationSize; i += tourney_size)
             {
                 
-                /*
-                for (int k = 0; k < populationSize; k++){
-                    cout << eddAgents[k]->fitness << " : " << k << endl;
-                }
-                */
-                
                 if ((populationSize - i) > tourney_size){
-                
-                
-                    // construct swarm agent population for the next generation
-                    //tAgent *offspring1 = new tAgent;
-                    //tAgent *offspring2 = new tAgent;
-                    
-                    //cout << i << endl;
                     
                     best_index = 0;
                     
@@ -567,28 +573,10 @@ int main(int argc, char *argv[])
                         
                         EANextGen[i + j] = offspring;
                     }
-                    
-                    /*
-                    if (eddAgents[i]->fitness > eddAgents[i + 1]->fitness)
-                    {
-                        offspring1->inherit(eddAgents[i], 0.0, update, false);
-                        offspring2->inherit(eddAgents[i], perSiteMutationRate, update, false);
-                    }
-                    else
-                    {
-                        offspring1->inherit(eddAgents[i + 1], 0.0, update, false);
-                        offspring2->inherit(eddAgents[i + 1], perSiteMutationRate, update, false);
-                    }
-                    
-                    EANextGen[i] = offspring1;
-                    EANextGen[i + 1] = offspring2;
-                     */
                      
                 } else {
                     
                     int tourney_remainder = populationSize - i;
-                    
-                    //cout << i << endl;
                     
                     best_index = 0;
                     
@@ -610,7 +598,13 @@ int main(int argc, char *argv[])
                 
             }
                 
+            }
+            
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                sort(eddAgents.begin(), eddAgents.end(), compare);
                 
+                EANextGen[0] = best;
                 
             }
             
@@ -627,10 +621,11 @@ int main(int argc, char *argv[])
                 }
                 eddAgents[i] = EANextGen[i];
             }
-                
-                
-        
             
+            
+            
+            
+  
             
         } else if (roulette == true){
             
@@ -642,20 +637,30 @@ int main(int argc, char *argv[])
             // randomly shuffle the agents
             random_shuffle(eddAgents.begin(), eddAgents.end());
             
+            
+            tAgent *best = new tAgent;
+            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            if (elitism == true){
+                int index = 0;
+                for (int i = 1; i < populationSize; i++){
+                    if (eddAgents[i]->fitness > best->fitness){
+                        index = i;
+                        //cout << index << endl;
+                    } else {
+                        cout << index << endl;
+                    }
+                    
+                }
+                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+            }
+            
             for(int i = 0; i < populationSize; i += roulette_size)
             {
-                
-                //for(int j = 0; j < populationSize; j++)
-                //{
-                //    cout << j << " " << eddAgents[j]->fitness << endl;
-                //}
-                
                 
                 if ((populationSize - (i)) > roulette_size){
                     
                     
                     //creates the "roulette wheel":
-                    //tAgent *offspring = new tAgent;
                     fit_count = 0.0;
                     total_fit = 0.0;
                     for (int j = 0; j < roulette_size; j++)
@@ -669,11 +674,8 @@ int main(int argc, char *argv[])
                     for (int j = 0; (chosen == false) and (j < roulette_size); j++)
                     {
                         fit_count += eddAgents[i + j]->fitness;
-                        //cout << "FITCOUNT: " << fit_count << " Limit: " << random_cutoff << " Fitness: " << eddAgents[i + j]->fitness << endl;
                         
                         if (fit_count > random_cutoff){
-                            
-                            //vector<tAgent> offspring(roulette_size);
                             
                             for (int p = 0; p < roulette_size; p++)
                             {
@@ -685,22 +687,9 @@ int main(int argc, char *argv[])
                                 
                             }
                             
-                            //offspring->inherit(eddAgents[i + j], perSiteMutationRate, update, false);
                             chosen = true;
                         }
                     }
-                    
-                    
-
-                    //creates offspring of the winner of the roulette:
-                    /*
-                    for (int j = 0; j < roulette_size; j++)
-                    {
-                        EANextGen[i + j] = offspring;
-                    }
-                    */
-                    
-                    
                     
                 } else {
                     
@@ -731,26 +720,22 @@ int main(int argc, char *argv[])
                                 
                                 EANextGen[i + p] = offspring;
                             }
-                            
-                            //offspring->inherit(eddAgents[i + j], perSiteMutationRate, update, false);
+
                             chosen = true;
                         }
                     }
-                    
-                    
-                    /*
-                    for (int j = 0; j < roulette_remainder; j++)
-                    {
-                        EANextGen[i + j] = offspring;
-                    }
-                     */
                      
                 }
             }
+
             
-            //sort(eddAgents.begin(), eddAgents.end());
-            
-            
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                sort(eddAgents.begin(), eddAgents.end(), compare);
+                
+                EANextGen[0] = best;
+                
+            }
             
             
             // shuffle the populations so there is a minimal chance of the same predator/prey combo in the next generation
@@ -760,11 +745,9 @@ int main(int argc, char *argv[])
             for(int i = 0; i < populationSize; ++i)
             {
                 // replace the edd agents from the previous generation
-                //cout << eddAgents[i]->nrPointingAtMe << endl;
                 eddAgents[i]->nrPointingAtMe--;
                 if(eddAgents[i]->nrPointingAtMe == 0)
                 {
-                    //cout << i << " :   "<< "XXXXXXXXXXX" << endl;
                     delete eddAgents[i];
                 }
                 
@@ -780,38 +763,31 @@ int main(int argc, char *argv[])
             
             
         } else if (top_percent == true){
+            
+            tAgent *best = new tAgent;
+            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            if (elitism == true){
+                int index = 0;
+                for (int i = 1; i < populationSize; i++){
+                    if (eddAgents[i]->fitness > best->fitness){
+                        index = i;
+                        //cout << index << endl;
+                    } else {
+                        cout << index << endl;
+                    }
+                    
+                }
+                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+            }
+            
+            
             // sort the agents:
             
-            //cout << update << "__________________" << endl;
-            /*
-            for (int k = 0; k < populationSize; k++){
-                eddAgents[k]->fitness = populationSize%(k+1);
-            }
-            */
-            
-            /*
-            for (int k = 0; k < populationSize; k++){
-                cout << eddAgents[k]->fitness << " : " << k << endl;
-            }
-            
-            cout << "!!!!!!!!!!!!" << endl;
-            */
-            
             sort(eddAgents.begin(), eddAgents.end(), compare);
-            
-            /*
-            for (int k = 0; k < populationSize; k++){
-                cout << eddAgents[k]->fitness << " : " << k << endl;
-            }
-            */
-            
-            
             
             //randomly select a parent from the top percentage of agents:
             int selection = floor(populationSize * percent_select);
             int cutoff = randDouble * selection;
-            //tAgent *offspring = new tAgent;
-            //offspring->inherit(eddAgents[populationSize - 1 - cutoff], perSiteMutationRate, update, false);
             
             for (int k = 0; k < populationSize; k++){
                 tAgent *offspring = new tAgent;
@@ -820,14 +796,23 @@ int main(int argc, char *argv[])
             }
             
             
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                sort(eddAgents.begin(), eddAgents.end(), compare);
+                
+                EANextGen[0] = best;
+                
+            }
+            
+            // shuffle the populations so there is a minimal chance of the same predator/prey combo in the next generation
+            random_shuffle(EANextGen.begin(), EANextGen.end());
+            
             for(int i = 0; i < populationSize; ++i)
             {
                 // replace the edd agents from the previous generation
-                //cout << eddAgents[i]->nrPointingAtMe << endl;
                 eddAgents[i]->nrPointingAtMe--;
                 if(eddAgents[i]->nrPointingAtMe == 0)
                 {
-                    //cout << i << " :   "<< "XXXXXXXXXXX" << endl;
                     delete eddAgents[i];
                 }
 
@@ -915,9 +900,3 @@ string findBestRun(tAgent *eddAgent)
     return bestString;
 }
 
-/*
-tAgent compare_fitness(tAgent *agent1, tAgent *agent2){
-    return *agent1->fitness < *agent2->fitness;
-    
-}
-*/
