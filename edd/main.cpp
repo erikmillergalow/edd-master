@@ -529,6 +529,13 @@ int main(int argc, char *argv[])
             //index value for most fit tAgent in the tournament round:
             int best_index = 0;
             
+            /*
+            sort(eddAgents.begin(), eddAgents.end(), compare);
+            
+            for (int i = 0; i < populationSize; i++){
+                cout << eddAgents[i]->fitness << endl;
+            }
+            */
             
             // randomly shuffle the agents
             random_shuffle(eddAgents.begin(), eddAgents.end());
@@ -536,20 +543,21 @@ int main(int argc, char *argv[])
             
             
             
-            tAgent *best = new tAgent;
-            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            tAgent best;
+            //best->inherit(eddAgents[0], perSiteMutationRate, update, false);
             if (elitism == true){
                 int index = 0;
                 for (int i = 1; i < populationSize; i++){
-                    if (eddAgents[i]->fitness > best->fitness){
+                    if (eddAgents[i]->fitness > eddAgents[index]->fitness){
+                        //cout << i << " : " << index << " : " << eddAgents[i]->fitness << " : " << eddAgents[index]->fitness<< endl;
                         index = i;
-                        //cout << index << endl;
                     } else {
-                        cout << index << endl;
+                        //cout << index;
+                        //cout << "--------------" << endl;
                     }
-                    
                 }
-                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+                best.inherit(eddAgents[index], perSiteMutationRate, update, false);
+                //cout << eddAgents[index]->fitness << "!@#$@$%@%$#@%@#%!@#!@#4" << endl;
             }
         
             for(int i = 0; i < populationSize; i += tourney_size)
@@ -600,13 +608,7 @@ int main(int argc, char *argv[])
                 
             }
             
-            //replaces the agent with the lowest fitness with the most fit agent from last generation:
-            if (elitism == true){
-                sort(eddAgents.begin(), eddAgents.end(), compare);
-                
-                EANextGen[0] = best;
-                
-            }
+            
             
             // shuffle the populations so there is a minimal chance of the same predator/prey combo in the next generation
             random_shuffle(EANextGen.begin(), EANextGen.end());
@@ -624,10 +626,28 @@ int main(int argc, char *argv[])
             
             
             
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                
+                sort(eddAgents.begin(), eddAgents.end(), compare);
+                
+                *eddAgents[0] = best;
+            }
+            
+            
+            //delete best;
             
   
             
         } else if (roulette == true){
+            
+            /*
+            sort(eddAgents.begin(), eddAgents.end(), compare);
+            
+            for (int i = 0; i < populationSize; i++){
+                cout << eddAgents[i]->fitness << endl;
+            }
+             */
             
             float fit_count = 0.0;
             float total_fit = 0.0;
@@ -638,20 +658,21 @@ int main(int argc, char *argv[])
             random_shuffle(eddAgents.begin(), eddAgents.end());
             
             
-            tAgent *best = new tAgent;
-            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            tAgent best;
+            //best->inherit(eddAgents[0], perSiteMutationRate, update, false);
             if (elitism == true){
                 int index = 0;
                 for (int i = 1; i < populationSize; i++){
-                    if (eddAgents[i]->fitness > best->fitness){
+                    if (eddAgents[i]->fitness > eddAgents[index]->fitness){
+                        //cout << i << " : " << index << " : " << eddAgents[i]->fitness << " : " << eddAgents[index]->fitness<< endl;
                         index = i;
-                        //cout << index << endl;
                     } else {
-                        cout << index << endl;
+                        //cout << index;
+                        //cout << "--------------" << endl;
                     }
-                    
                 }
-                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+                best.inherit(eddAgents[index], perSiteMutationRate, update, false);
+                //cout << eddAgents[index]->fitness << "!@#$@$%@%$#@%@#%!@#!@#4" << endl;
             }
             
             for(int i = 0; i < populationSize; i += roulette_size)
@@ -729,14 +750,6 @@ int main(int argc, char *argv[])
             }
 
             
-            //replaces the agent with the lowest fitness with the most fit agent from last generation:
-            if (elitism == true){
-                sort(eddAgents.begin(), eddAgents.end(), compare);
-                
-                EANextGen[0] = best;
-                
-            }
-            
             
             // shuffle the populations so there is a minimal chance of the same predator/prey combo in the next generation
             random_shuffle(EANextGen.begin(), EANextGen.end());
@@ -751,10 +764,19 @@ int main(int argc, char *argv[])
                     delete eddAgents[i];
                 }
                 
+                
                  
                 eddAgents[i] = EANextGen[i];
+                
             }
-
+            
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                
+                sort(eddAgents.begin(), eddAgents.end(), compare);
+                
+                *eddAgents[0] = best;
+            }
             
             
         } else if (rank_selection == true){
@@ -764,20 +786,24 @@ int main(int argc, char *argv[])
             
         } else if (top_percent == true){
             
-            tAgent *best = new tAgent;
-            best->inherit(eddAgents[0], perSiteMutationRate, update, false);
+            // randomly shuffle the agents
+            random_shuffle(eddAgents.begin(), eddAgents.end());
+            
+            tAgent best;
+            //best->inherit(eddAgents[0], perSiteMutationRate, update, false);
             if (elitism == true){
                 int index = 0;
                 for (int i = 1; i < populationSize; i++){
-                    if (eddAgents[i]->fitness > best->fitness){
+                    if (eddAgents[i]->fitness > eddAgents[index]->fitness){
+                        //cout << i << " : " << index << " : " << eddAgents[i]->fitness << " : " << eddAgents[index]->fitness<< endl;
                         index = i;
-                        //cout << index << endl;
                     } else {
-                        cout << index << endl;
+                        //cout << index;
+                        //cout << "--------------" << endl;
                     }
-                    
                 }
-                best->inherit(eddAgents[index], perSiteMutationRate, update, false);
+                best.inherit(eddAgents[index], perSiteMutationRate, update, false);
+                //cout << eddAgents[index]->fitness << "!@#$@$%@%$#@%@#%!@#!@#4" << endl;
             }
             
             
@@ -796,13 +822,7 @@ int main(int argc, char *argv[])
             }
             
             
-            //replaces the agent with the lowest fitness with the most fit agent from last generation:
-            if (elitism == true){
-                sort(eddAgents.begin(), eddAgents.end(), compare);
-                
-                EANextGen[0] = best;
-                
-            }
+            
             
             // shuffle the populations so there is a minimal chance of the same predator/prey combo in the next generation
             random_shuffle(EANextGen.begin(), EANextGen.end());
@@ -817,6 +837,14 @@ int main(int argc, char *argv[])
                 }
 
                 eddAgents[i] = EANextGen[i];
+            }
+            
+            //replaces the agent with the lowest fitness with the most fit agent from last generation:
+            if (elitism == true){
+                
+                sort(eddAgents.begin(), eddAgents.end(), compare);
+                
+                *eddAgents[0] = best;
             }
             
         }

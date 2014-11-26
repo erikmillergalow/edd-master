@@ -321,6 +321,7 @@ string tGame::executeGame(tAgent* eddAgent, FILE *dataFile, bool report, int gri
         for (int i = 0; i < 10; ++i)
         {
             classifyDigit[i] = eddAgent->states[(maxNodes - 7 - i)] & 1;
+            //cout <<classifyDigit[i] << endl;
         }
         
         int vetoBits[10];
@@ -336,6 +337,8 @@ string tGame::executeGame(tAgent* eddAgent, FILE *dataFile, bool report, int gri
         for (int i = 0; i < 10; ++i)
         {
             bool guessedThisDigit = (classifyDigit[i] == 1 && vetoBits[i] == 0);
+            
+            //cout << i << ":" << digit << endl;
             
             if (guessedThisDigit)
             {
@@ -382,7 +385,10 @@ string tGame::executeGame(tAgent* eddAgent, FILE *dataFile, bool report, int gri
         eddAgent->truePositiveRate[digit] = eddAgent->truePositives[digit] / (eddAgent->truePositives[digit] + eddAgent->falseNegatives[digit]);
         
         eddAgent->trueNegativeRate[digit] = eddAgent->trueNegatives[digit] / (eddAgent->trueNegatives[digit] + eddAgent->falsePositives[digit]);
+        
     }
+    
+    //cout << *eddAgent->truePositiveRate << " : " << *eddAgent->trueNegativeRate << endl;
     
     // compute overall fitness
     eddAgent->fitness = eddAgent->classificationFitness / 10.0;
