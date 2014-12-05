@@ -71,6 +71,7 @@ bool    elitism                     = false;
 bool    top_percent                 = false;
 float   percent_select              = 0.10;
 int     tourney_size                = 2;
+int     elite_size                  = 1;
 
 
 int main(int argc, char *argv[])
@@ -302,9 +303,11 @@ int main(int argc, char *argv[])
         else if (strcmp(argv[i], "-tp") == 0 && (i + 1) < argc)
         {
             ++i;
+            percent_select
+            = atof(argv[i]);
             top_percent = true;
             tournament = false;
-            cout << "using top percent selection mechanism (top " << percent_select * 10 << " percent)..."  << endl;
+            cout << "using top percent selection mechanism (top " << percent_select * 100 << "%)..."  << endl;
         }
         
         // -tr [float]: use tournament style selection with a custom sized grouping:
@@ -313,6 +316,14 @@ int main(int argc, char *argv[])
             ++i;
             tourney_size = atof(argv[i]);
             cout << "using tournament style selection mechanism (" << tourney_size << " agents per selection)..."  << endl;
+        }
+        
+        // -eli [float]: use tournament style selection with a custom sized grouping:
+        else if (strcmp(argv[i], "-eli") == 0 && (i + 1) < argc)
+        {
+            ++i;
+            elite_size = atof(argv[i]);
+            cout << "using pure elitism selection mechanism (" << elite_size << " agents per selection)..."  << endl;
         }
         
     }
@@ -795,15 +806,10 @@ int main(int argc, char *argv[])
                 int index = 0;
                 for (int i = 1; i < populationSize; i++){
                     if (eddAgents[i]->fitness > eddAgents[index]->fitness){
-                        //cout << i << " : " << index << " : " << eddAgents[i]->fitness << " : " << eddAgents[index]->fitness<< endl;
                         index = i;
-                    } else {
-                        //cout << index;
-                        //cout << "--------------" << endl;
                     }
                 }
                 best.inherit(eddAgents[index], perSiteMutationRate, update, false);
-                //cout << eddAgents[index]->fitness << "!@#$@$%@%$#@%@#%!@#!@#4" << endl;
             }
             
             
