@@ -65,6 +65,7 @@ bool    noise                       = false;
 float   noiseAmount                 = 0.05;
 bool    tournament                  = true;
 bool    roulette                    = false;
+bool    pure_elitism                = false;
 int     roulette_size               = 2;
 bool    rank_selection              = false;
 bool    elitism                     = false;
@@ -323,6 +324,8 @@ int main(int argc, char *argv[])
         {
             ++i;
             elite_size = atof(argv[i]);
+            tournament = false;
+            pure_elitism = true;
             cout << "using pure elitism selection mechanism (" << elite_size << " agents per selection)..."  << endl;
         }
         
@@ -789,19 +792,12 @@ int main(int argc, char *argv[])
                 *eddAgents[0] = best;
             }
             
-            
-        } else if (rank_selection == true){
-            
-            
-            
-            
         } else if (top_percent == true){
             
             // randomly shuffle the agents
             random_shuffle(eddAgents.begin(), eddAgents.end());
             
             tAgent best;
-            //best->inherit(eddAgents[0], perSiteMutationRate, update, false);
             if (elitism == true){
                 int index = 0;
                 for (int i = 1; i < populationSize; i++){
@@ -853,7 +849,45 @@ int main(int argc, char *argv[])
                 *eddAgents[0] = best;
             }
             
+        } else if (pure_elitism == true){
+            
+            //for (int i = 0; i<populationSize; i++){
+            //    cout << eddAgents[i]->fitness << endl;
+            //}
+            
+            
+            // sort the agents:
+            
+            sort(eddAgents.begin(), eddAgents.end(), compare);
+            
+            
+            for (int k = 0; k < populationSize; k++){
+                tAgent *offspring = new tAgent;
+                offspring->inherit(eddAgents[populationSize - 1 - (k % elite_size)], perSiteMutationRate, update, false);
+                EANextGen[k] = offspring;
+            }
+            
+            
+            for(int i = 0; i < populationSize; ++i)
+            {
+                // replace the edd agents from the previous generation
+                eddAgents[i]->nrPointingAtMe--;
+                if(eddAgents[i]->nrPointingAtMe == 0)
+                {
+                    delete eddAgents[i];
+                }
+                
+                eddAgents[i] = EANextGen[i];
+            }
+            
+            
         }
+        
+        
+        
+        
+        
+        
         
         if (track_best_brains && update % track_best_brains_frequency == 0)
         {
